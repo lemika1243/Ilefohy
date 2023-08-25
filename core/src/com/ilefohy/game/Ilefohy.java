@@ -21,7 +21,7 @@ public class Ilefohy extends Game {
 	@Override
 	public void create (){
 		setForPapango(new AnimationHandler(this));
-		this.setScreen(getForPapango());
+		setScreen(getForPapango());
 	}
 
 	@Override

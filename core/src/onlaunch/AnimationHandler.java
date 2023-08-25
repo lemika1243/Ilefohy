@@ -36,7 +36,6 @@ public class AnimationHandler implements Screen{
 		}
 		
 		setCounter(getCounter()+1);		
-		System.out.println(getCounter());
 	}
 	
 	//Constructor
@@ -50,26 +49,24 @@ public class AnimationHandler implements Screen{
 	
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(0, 0, 0, 1);
-		getPapangoImg().begin();
-		
-		try {
-			this.fade();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		getPapangoImg().draw(getEnterpriseimg(), getPrincipalGame().getWidth()/4, getPrincipalGame().getHeight()/4, getPrincipalGame().getWidth()/2, getPrincipalGame().getHeight()/2);
-		
-		
-        getPapangoImg().end();
-        
-        if(getCounter() > 50) {
-        	System.out.println("Here");
+        if(getCounter() == 51) {
         	getPrincipalGame().setScreen(new ScreenMenu(this.getPrincipalGame()));
         	this.dispose();
         }
-        
-		
+        else {
+    		ScreenUtils.clear(0, 0, 0, 1);
+    		
+    		getPapangoImg().begin();
+    		try {
+    			this.fade();
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    		getPapangoImg().draw(getEnterpriseimg(), getPrincipalGame().getWidth()/4, getPrincipalGame().getHeight()/4, getPrincipalGame().getWidth()/2, getPrincipalGame().getHeight()/2);
+    		
+    		
+            getPapangoImg().end();
+        }
 	}
 	
 	@Override

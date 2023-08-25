@@ -2,30 +2,34 @@ package stages;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.ilefohy.game.Ilefohy;
 
+import ScreenMenu.ScreenMenu;
+
 public class Stage1 implements Screen {
+	ScreenMenu menu;
 	SpriteBatch ilefohy;
-	Vector2 ilefohyPos;
+	Vector2 ilefohyPos;	
 	Ilefohy game;
 	Texture imgIlefohy;
-	public Stage1(Ilefohy g) {
+	public Stage1(ScreenMenu m) {
+		menu=m;
 		setImgIlefohy(new Texture(Gdx.files.internal("Papango.png")));
-		game = g; 
+		game = menu.getGames(); 
 		ilefohy = new SpriteBatch();
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void render(float delta) {
+		menu.dispose();
 		ilefohy.begin();
 		ilefohy.draw(getImgIlefohy(), 0, 0);
 		ilefohy.end();
