@@ -3,19 +3,14 @@ package ScreenMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.ilefohy.game.Ilefohy;
 
 import mpihaino.MpihainoClick;
-import stages.Stage1;
+import mpihaino.MpihainoFanalaHidy;
 
 public class ScreenMenu implements Screen{
 	String style;
@@ -50,7 +45,7 @@ public class ScreenMenu implements Screen{
     }
 
 	public void resize(int width, int height) {
-
+		
 	}
 
 	@Override
@@ -70,7 +65,6 @@ public class ScreenMenu implements Screen{
 	@Override
 	public void dispose() {
 		stage.clear();
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 	
 	public Button getPlayButton() {return play;}
