@@ -11,8 +11,8 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("Ilefohy");
 		
-		int Width = 800;
-		int Height = 600;
+		int Width = 1200;
+		int Height = 800;
 		
 		config.setWindowedMode(Width, Height);
 		
@@ -22,5 +22,6 @@ public class DesktopLauncher {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 }
