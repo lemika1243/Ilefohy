@@ -4,35 +4,38 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.ilefohy.game.Ilefohy;
 
 import ScreenMenu.ScreenMenu;
+import gameplay.GameObject;
+import gameplay.Player;
+import mpihaino.MpihainoFanalaHidy;
 
 public class Stage1 implements Screen {
 	ScreenMenu menu;
-	SpriteBatch ilefohy;
-	Vector2 ilefohyPos;	
 	Ilefohy game;
-	Texture imgIlefohy;
+	GameObject player;
+	MpihainoFanalaHidy fanala;
 	public Stage1(ScreenMenu m) {
 		menu=m;
-		setImgIlefohy(new Texture(Gdx.files.internal("Papango.png")));
 		game = menu.getGames(); 
-		ilefohy = new SpriteBatch();
+		player=new Player(0, 0,100,140);
+		player.setSpeed(5);
+		fanala=new MpihainoFanalaHidy();
+		Gdx.input.setInputProcessor(fanala);
 	}
 
-	@Override
+@Override
 	public void show() {
+		menu.dispose();
 	}
 
 	@Override
 	public void render(float delta) {
-		menu.dispose();
-		ilefohy.begin();
-		ilefohy.draw(getImgIlefohy(), 0, 0);
-		ilefohy.end();
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		player.drawMe(delta);
+		player.move(fanala.getIndexOfMovement());
 	}
 
 	public Ilefohy getPrincipalGame() {
@@ -65,32 +68,5 @@ public class Stage1 implements Screen {
 
 	@Override
 	public void dispose() {
-		getIlefohyImg().dispose();
-	}
-	public SpriteBatch getIlefohyImg() {
-		return ilefohy;
-	}
-	
-	public void getIlefohyImg(SpriteBatch Ilefo) {
-		ilefohy = Ilefo;
-	}
-	
-	public Vector2 getIlefohyPos() {
-		return ilefohyPos;
-	}
-	
-	public void setIlefohyPos(int x, int y) {
-		ilefohyPos = new Vector2(x, y);
-	}
-	public Texture getImgIlefohy() {
-		return imgIlefohy;
-	}
-
-	public void setImgIlefohy(Texture text) {
-		imgIlefohy = text;
-	}
-	
-	public void getIlefohyImg(Texture Ilefo) {
-		imgIlefohy = Ilefo;
 	}
 }
