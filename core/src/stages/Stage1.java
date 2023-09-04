@@ -15,7 +15,7 @@ import mpihaino.MpihainoFanalaHidy;
 public class Stage1 implements Screen {
 	ScreenMenu menu;
 	Ilefohy game;
-	GameObject player;
+	Player player;
 	MpihainoFanalaHidy fanala;
 	public Stage1(ScreenMenu m) {
 		menu=m;
@@ -36,6 +36,7 @@ public class Stage1 implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		player.drawMe(delta);
 		player.move(fanala.getIndexOfMovement());
+		player.mitifitra(fanala.getMouseKey());
 	}
 
 	public Ilefohy getPrincipalGame() {

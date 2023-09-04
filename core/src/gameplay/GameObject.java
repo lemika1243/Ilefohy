@@ -26,10 +26,7 @@ public abstract class GameObject extends Actor {
         setHeight(h);
         setWidth(w);
         speed = 1;
-        setTextures("Player/Biker_idle.png");
-        frameheight=textures.getHeight();
         throughTime=0f;
-        setFrame(4);
     }
 
     public void drawMe(float delta) {
@@ -89,6 +86,7 @@ public abstract class GameObject extends Actor {
     }
     public void setTextures(String assetLocation) {
     	textures=new Texture(Gdx.files.internal(assetLocation));
+        frameheight=textures.getHeight();
     }
     public void setFrame(int a) {
     	framewidth=textures.getWidth()/a;

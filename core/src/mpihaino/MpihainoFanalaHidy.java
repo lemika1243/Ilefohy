@@ -8,6 +8,7 @@ import gameplay.GameObject;
 
 public class MpihainoFanalaHidy implements InputProcessor{
 	Vector<Integer> indexOfMovement=new Vector<Integer>();
+	int mouseKey=-1;
 	@Override
 	public boolean keyDown(int keycode) {
 		indexOfMovement.add(keycode);
@@ -33,12 +34,13 @@ public class MpihainoFanalaHidy implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		mouseKey=button;
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		mouseKey=-1;
 		return false;
 	}
 
@@ -58,6 +60,9 @@ public class MpihainoFanalaHidy implements InputProcessor{
 	public boolean scrolled(float amountX, float amountY) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	public int getMouseKey() {
+		return mouseKey;
 	}
 
 }
