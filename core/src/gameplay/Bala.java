@@ -28,10 +28,9 @@ public class Bala extends GameObject{
 	public void move() {
 		setX(getX()+getDirection());
 		if(temporary>=getDuration()) {
-			setTextures("balaPotika.png");
-			setFrame(5,25);
+			matyAnimation();
 		}
-		if(temporary>=(getDuration()+0.25f)) {
+		else if(temporary>=(getDuration()+0.25f)) {
 			maty();
 		}
 	}
@@ -78,7 +77,25 @@ public class Bala extends GameObject{
 		setIsDead(true);
 	}
 	
+	public void matyAnimation() {
+		setTextures("balaPotika.png");
+		setFrame(5,25);
+		setX(getX()-(getDirection()));
+	}
+	
 	public boolean getIsDead() {
 		return isDead;
+	}
+
+	@Override
+	public void hurt() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hurtAnimation() {
+		// TODO Auto-generated method stub
+		
 	}
 }

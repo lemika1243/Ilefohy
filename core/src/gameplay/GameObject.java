@@ -53,6 +53,9 @@ public abstract class GameObject extends Actor {
     public abstract void move(Vector<Integer> keys);
     public abstract void mitifitra(int key);
     public abstract void maty();
+    public abstract void matyAnimation();
+    public abstract void hurt();
+    public abstract void hurtAnimation();
 
     public void setModel(SpriteBatch s) {
         model = s;
@@ -140,4 +143,5 @@ public abstract class GameObject extends Actor {
     public void setIsDead(boolean d) {
     	isDead=d;
     }
+    
 }
