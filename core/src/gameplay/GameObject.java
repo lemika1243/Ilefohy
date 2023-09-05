@@ -16,10 +16,13 @@ public abstract class GameObject extends Actor {
 	Texture textures;
 	TextureRegion[] frames;
 	Animation animation;
+	float deltaTime=0f;
 	float throughTime;
 	int framewidth, frameheight;
     float speed;
     boolean flipHorizontally = false;
+    boolean isDead=false;
+    int hery=3;
 
     public GameObject(float x, float y, float w, float h) {
         this.setPosition(x, y);
@@ -30,6 +33,7 @@ public abstract class GameObject extends Actor {
     }
 
     public void drawMe(float delta) {
+    	deltaTime=delta;
         model.begin();
         throughTime+=delta;
         TextureRegion currentFrame = (TextureRegion) animation.getKeyFrame(throughTime, true);
@@ -47,6 +51,8 @@ public abstract class GameObject extends Actor {
     }
 
     public abstract void move(Vector<Integer> keys);
+    public abstract void mitifitra(int key);
+    public abstract void maty();
 
     public void setModel(SpriteBatch s) {
         model = s;
@@ -81,13 +87,25 @@ public abstract class GameObject extends Actor {
     public void setFlipHorizontally(boolean flip) {
         flipHorizontally = flip; // Set the horizontal flip flag
     }
+    
+    
     public Texture getTextures() {
     	return textures;
     }
+    
+    
     public void setTextures(String assetLocation) {
     	textures=new Texture(Gdx.files.internal(assetLocation));
         frameheight=textures.getHeight();
     }
+    
+    
+    public void setTextures(String assetLocation,int a) {
+    	textures=new Texture(Gdx.files.internal(assetLocation));
+        frameheight=textures.getHeight()/a;
+    }
+    
+    
     public void setFrame(int a) {
     	framewidth=textures.getWidth()/a;
     	frames=new TextureRegion[a];
@@ -96,7 +114,30 @@ public abstract class GameObject extends Actor {
 		}
     	setAnimation(new Animation<TextureRegion>(0.25f, frames));
     }
+    
+    public void setFrame(int a, float duration) {
+    	framewidth=textures.getWidth()/a;
+    	frames=new TextureRegion[a];
+    	for (int i = 0; i < frames.length; i++) {
+            frames[i] = new TextureRegion(textures, i * framewidth, 0, framewidth, frameheight);
+		}
+    	setAnimation(new Animation<TextureRegion>(duration, frames));
+    }
+    
     public void setAnimation(Animation<TextureRegion> a) {
     	animation=a;
+    }
+    
+    public int getHery() {
+    	return hery;
+    }
+    
+    public void setHery(int h) {
+    	h=Math.abs(h);
+    	hery=h;
+    }
+    
+    public void setIsDead(boolean d) {
+    	isDead=d;
     }
 }

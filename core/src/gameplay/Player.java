@@ -11,6 +11,8 @@ public class Player extends GameObject{
 	boolean isMoving=false;
 	int tempbala=0;
 	float tempmitifitra=0f;
+	float temps=0f;
+	int hery=3;
 	Vector<Bala> bala=new Vector<Bala>();
 	
 	public Player(float x, float y, float w, float h) {
@@ -48,6 +50,7 @@ public class Player extends GameObject{
 	}
 	
 	public void mitifitra(int key) {
+        moveBala();
         if(key==0) {
         	Bala temp=new Bala(flipHorizontally, getX(), getY());
         	tempbala++;
@@ -60,15 +63,26 @@ public class Player extends GameObject{
         else {
         	tempbala=0;
         }
-        moveBala();
 	}
 	
 	public void moveBala() {
 		for (int i = 0; i < bala.size(); i++) {
 			Bala temp=bala.elementAt(i);
-			temp.move();
-			temp.drawMe(throughTime);
+			if(temp.getIsDead()) {
+				bala.remove(i);
+			}
+			else {
+				temp.move();
+				temp.setTemps(temp.getTemps()+deltaTime);
+				temp.drawMe(throughTime);
+			}
 		}
+	}
+
+	@Override
+	public void maty() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
