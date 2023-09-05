@@ -13,6 +13,7 @@ public class Player extends GameObject{
 	float tempmitifitra=0f;
 	float temps=0f;
 	int hery=3;
+	boolean isHurt=false;
 	Vector<Bala> bala=new Vector<Bala>();
 	
 	public Player(float x, float y, float w, float h) {
@@ -36,7 +37,13 @@ public class Player extends GameObject{
                 mpanisa++;
                 isMoving=true;
             }
+            else if(ind==Keys.F) {
+            	System.out.println(hery);
+            	hurt();
+            	hurtAnimation();
+            }
 		}
+    	maty();
     	if(mpanisa==0||mpanisa>=2) {
     		isMoving=false;
     	}
@@ -81,8 +88,25 @@ public class Player extends GameObject{
 
 	@Override
 	public void maty() {
-		// TODO Auto-generated method stub
-		
+		if(hery==0) {
+			matyAnimation();
+		}
+	}
+	
+	public void matyAnimation() {
+		setTextures("Player/Biker_death.png");
+		setFrame(6);
+	}
+
+	@Override
+	public void hurt() {
+		hery-=1;
+	}
+
+	@Override
+	public void hurtAnimation() {
+		setTextures("Player/Biker_hurt.png");
+		setFrame(2);
 	}
 
 }
