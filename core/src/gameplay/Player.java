@@ -7,9 +7,10 @@ import com.badlogic.gdx.Input.Keys;
 public class Player extends GameObject{
 	boolean isMoving=false;
 	int tempbala=0;
-	float tempmitifitra=0f;
-	float temps=0f;
-	int hery=3;
+	float temphurt=0f;
+	float timeDeath=0f;
+	float afterHurtDuration=2f;
+	int hery=1;
 	boolean isHurt=false;
 	Vector<Bala> bala=new Vector<Bala>();
 	
@@ -35,7 +36,7 @@ public class Player extends GameObject{
 	@Override
 	public void maty() {
 		if(hery==0) {
-			matyAnimation();
+			isDead=true;
 		}
 	}
 	
@@ -58,6 +59,7 @@ public class Player extends GameObject{
 	@Override
 	public void move(Vector<Integer> keys) {
 		int mpanisa=0;
+    	int tempanisa=0;
     	for (int i = 0; i < keys.size(); i++) {
     		int ind=keys.elementAt(i).intValue();
             if (ind == Keys.D) {
@@ -70,24 +72,19 @@ public class Player extends GameObject{
                 mpanisa++;
                 isMoving=true;
             }
-            else if(ind==Keys.F) {
-            	System.out.println(hery);
-            	hurt();
-            	hurtAnimation();
+            else if(ind==Keys.F&&tempanisa==0) {
+            	isHurt=true;
+            	tempanisa++;
             }
 		}
     	maty();
     	if(mpanisa==0||mpanisa>=2) {
     		isMoving=false;
     	}
-    	if(isMoving) {
-    		setTextures("Player/Biker_run.png");
-    		setFrame(6,0.25f);
-    	}else {
-    		setTextures("Player/Biker_idle.png");
-    		setFrame(4,0.25f);
-    	}
-	}
+    	verifyMovingFlip();
+    	verifyHurt();
+    	verifyDeath();
+    }
 	//END
 	
 	
@@ -120,8 +117,47 @@ public class Player extends GameObject{
 			else {
 				temp.move();
 				temp.setTemps(temp.getTemps()+deltaTime);
-				temp.drawMe(throughTime);
+				temp.drawMe(deltaTime);
 			}
+		}
+	}
+
+	public void verifyMovingFlip() {
+		if (isMoving) {
+    		setTextures("Player/Biker_run.png");
+    		setFrame(6,0.25f);
+    	}else {
+    		setTextures("Player/Biker_idle.png");
+    		setFrame(4,0.25f);
+    	}
+	}
+	
+	public void verifyHurt() {
+		if(isHurt) {
+			if(temphurt<=afterHurtDuration) {
+	    		hurtAnimation();
+	    		temphurt+=deltaTime;
+	    		isHurt=true;
+			}
+			else {
+				temphurt=0;
+				hurt();
+	    		isHurt=false;
+			}
+		}
+	}
+	
+	public void verifyDeath() {
+		maty();
+		if(isDead) {
+			timeDeath+=deltaTime;
+			matyAnimation();
+			if(timeDeath>animation.getAnimationDuration()-1) {
+				setLoopAnimation(false);
+			}
+		}
+		else {
+			setLoopAnimation(true);
 		}
 	}
 	//END
