@@ -15,7 +15,7 @@ public abstract class GameObject extends Actor {
     Sprite model2d;
 	Texture textures;
 	TextureRegion[] frames;
-	Animation animation;
+	Animation<TextureRegion> animation;
 	float deltaTime=0f;
 	float throughTime;
 	int framewidth, frameheight;
@@ -24,6 +24,7 @@ public abstract class GameObject extends Actor {
     boolean isDead=false;
     int hery=3;
 
+    //CONSTRUCTORS
     public GameObject(float x, float y, float w, float h) {
         this.setPosition(x, y);
         setHeight(h);
@@ -31,50 +32,11 @@ public abstract class GameObject extends Actor {
         speed = 1;
         throughTime=0f;
     }
+    //END
 
-    public void drawMe(float delta) {
-    	deltaTime=delta;
-        model.begin();
-        throughTime+=delta;
-        TextureRegion currentFrame = (TextureRegion) animation.getKeyFrame(throughTime, true);
-        model2d=new Sprite(currentFrame);
-
-        // Flip the image horizontally if needed
-        if (flipHorizontally) {
-            model2d.setFlip(true, false); // Flip horizontally
-        } else {
-            model2d.setFlip(false, false); // Reset flip
-        }
-
-        model.draw(model2d, getX(), getY(), getHeight(), getWidth());
-        model.end();
-    }
-
-    public abstract void move(Vector<Integer> keys);
-    public abstract void mitifitra(int key);
-    public abstract void maty();
-    public abstract void matyAnimation();
-    public abstract void hurt();
-    public abstract void hurtAnimation();
-
-    public void setModel(SpriteBatch s) {
-        model = s;
-    }
-
-    // MOVEMENT FUNCTION
-    public void moveRight() {
-        float move = (float) (getX() + getSpeed());
-        setX(move);
-        setFlipHorizontally(false);
-    }
-
-    public void moveLeft() {
-        float move = (float) (getX() - getSpeed());
-        setX(move);
-        setFlipHorizontally(true);
-    }
-    // END
-
+    
+    
+    //GET AND SET FUNCTIONS
     public SpriteBatch getModel() {
         return model;
     }
@@ -109,15 +71,6 @@ public abstract class GameObject extends Actor {
     }
     
     
-    public void setFrame(int a) {
-    	framewidth=textures.getWidth()/a;
-    	frames=new TextureRegion[a];
-    	for (int i = 0; i < frames.length; i++) {
-            frames[i] = new TextureRegion(textures, i * framewidth, 0, framewidth, frameheight);
-		}
-    	setAnimation(new Animation<TextureRegion>(0.25f, frames));
-    }
-    
     public void setFrame(int a, float duration) {
     	framewidth=textures.getWidth()/a;
     	frames=new TextureRegion[a];
@@ -143,5 +96,64 @@ public abstract class GameObject extends Actor {
     public void setIsDead(boolean d) {
     	isDead=d;
     }
+
+    public void setModel(SpriteBatch s) {
+        model = s;
+    }
+    
+    //END
+    
+    
+    
+    
+    
+    //REDEFINITION OF ABSTRACT FUNCTIONS
+
+    public abstract void move(Vector<Integer> keys);
+    public abstract void mitifitra(int key);
+    public abstract void maty();
+    public abstract void matyAnimation();
+    public abstract void hurt();
+    public abstract void hurtAnimation();
+    
+    //END
+    
+    
+    
+    
+    
+    //UTILITY FUNCTIONS
+
+    public void drawMe(float delta) {
+    	deltaTime=delta;
+        model.begin();
+        throughTime+=delta;
+        TextureRegion currentFrame = (TextureRegion) animation.getKeyFrame(throughTime, true);
+        model2d=new Sprite(currentFrame);
+
+        // Flip the image horizontally if needed
+        if (flipHorizontally) {
+            model2d.setFlip(true, false); // Flip horizontally
+        } else {
+            model2d.setFlip(false, false); // Reset flip
+        }
+
+        model.draw(model2d, getX(), getY(), getHeight(), getWidth());
+        model.end();
+    }
+    // MOVEMENT FUNCTION
+    public void moveRight() {
+        float move = (float) (getX() + getSpeed());
+        setX(move);
+        setFlipHorizontally(false);
+    }
+
+    public void moveLeft() {
+        float move = (float) (getX() - getSpeed());
+        setX(move);
+        setFlipHorizontally(true);
+    }
+    // END
+    //END
     
 }
