@@ -18,7 +18,7 @@ public class Bala extends GameObject{
 		flipHorizontally=flip;
 		setDirection(flip);
 		setTextures("balaAnimation.png");
-		setFrame(4,0.25f);
+		setFrame(4,25f);
 		temporary=0f;
 		duration=1;
 	}

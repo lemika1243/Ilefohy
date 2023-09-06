@@ -16,6 +16,7 @@ public abstract class GameObject extends Actor {
 	Texture textures;
 	TextureRegion[] frames;
 	Animation<TextureRegion> animation;
+	TextureRegion currentFrame=new TextureRegion();
 	float deltaTime=0f;
 	float throughTime;
 	int framewidth, frameheight;
@@ -23,6 +24,7 @@ public abstract class GameObject extends Actor {
     boolean flipHorizontally = false;
     boolean isDead=false;
     int hery=3;
+    boolean loopedAnimation=true;
 
     //CONSTRUCTORS
     public GameObject(float x, float y, float w, float h) {
@@ -100,6 +102,9 @@ public abstract class GameObject extends Actor {
     public void setModel(SpriteBatch s) {
         model = s;
     }
+    public void setLoopAnimation(boolean l) {
+    	loopedAnimation=l;
+    }
     
     //END
     
@@ -125,11 +130,17 @@ public abstract class GameObject extends Actor {
     //UTILITY FUNCTIONS
 
     public void drawMe(float delta) {
-    	deltaTime=delta;
+        deltaTime = delta;
         model.begin();
-        throughTime+=delta;
-        TextureRegion currentFrame = (TextureRegion) animation.getKeyFrame(throughTime, true);
-        model2d=new Sprite(currentFrame);
+        throughTime += delta;
+
+        if (loopedAnimation) {
+            loopAnimation();
+        } else {
+            finishAnimation();
+        }
+
+        model2d = new Sprite(currentFrame);
 
         // Flip the image horizontally if needed
         if (flipHorizontally) {
@@ -152,6 +163,12 @@ public abstract class GameObject extends Actor {
         float move = (float) (getX() - getSpeed());
         setX(move);
         setFlipHorizontally(true);
+    }
+    void finishAnimation() {
+    	currentFrame=animation.getKeyFrame(throughTime,false);
+    }
+    void loopAnimation() {
+        currentFrame = animation.getKeyFrame(throughTime, true);
     }
     // END
     //END
