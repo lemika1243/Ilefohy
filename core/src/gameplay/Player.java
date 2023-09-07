@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation.Pow;
 
 public class Player extends GameObject{
@@ -190,5 +191,6 @@ public class Player extends GameObject{
 			}
 		}
 	}
+	
 	//END
 }
