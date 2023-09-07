@@ -93,7 +93,7 @@ public class Bala extends GameObject{
 	
 	public void matyAnimation() {
 		setTextures("balaPotika.png");
-		setFrame(5,25);
+		setFrame(5,0.4f);
 		setX(getX()-(getDirection()));
 	}
 	@Override
