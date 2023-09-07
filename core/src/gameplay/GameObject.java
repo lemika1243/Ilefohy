@@ -3,6 +3,7 @@ package gameplay;
 import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public abstract class GameObject extends Actor {
+	float gravity=10f;
+	float acceleration=0;
     SpriteBatch model = new SpriteBatch();
     Sprite model2d;
 	Texture textures;
@@ -25,6 +28,9 @@ public abstract class GameObject extends Actor {
     boolean isDead=false;
     int hery=3;
     boolean loopedAnimation=true;
+    OrthographicCamera camera;
+    
+    
 
     //CONSTRUCTORS
     public GameObject(float x, float y, float w, float h) {
@@ -38,7 +44,18 @@ public abstract class GameObject extends Actor {
 
     
     
+    
+    
     //GET AND SET FUNCTIONS
+    public void setGravity(float g) {
+    	gravity=g;
+    }
+    public void setAcceleration(float a) {
+    	acceleration=a;
+    }
+    public void setCamera(OrthographicCamera o) {
+    	camera=o;
+    }
     public SpriteBatch getModel() {
         return model;
     }
@@ -80,6 +97,9 @@ public abstract class GameObject extends Actor {
             frames[i] = new TextureRegion(textures, i * framewidth, 0, framewidth, frameheight);
 		}
     	setAnimation(new Animation<TextureRegion>(duration, frames));
+    	animation.setPlayMode(Animation.PlayMode.NORMAL); // Set to normal to ensure animation starts from the beginning
+    	animation.setFrameDuration(duration); // Reset the frame duration if necessary
+    	animation.getKeyFrame(0);
     }
     
     public void setAnimation(Animation<TextureRegion> a) {
@@ -103,10 +123,21 @@ public abstract class GameObject extends Actor {
         model = s;
     }
     public void setLoopAnimation(boolean l) {
-    	loopedAnimation=l;
+        loopedAnimation = l;
+        
+        if (animation != null) {
+            // Set the play mode of the animation
+            if (loopedAnimation) {
+                animation.setPlayMode(Animation.PlayMode.LOOP);
+            } else {
+                animation.setPlayMode(Animation.PlayMode.NORMAL);
+            }
+        }
     }
+
     
     //END
+    
     
     
     
@@ -128,7 +159,6 @@ public abstract class GameObject extends Actor {
     
     
     //UTILITY FUNCTIONS
-
     public void drawMe(float delta) {
         deltaTime = delta;
         model.begin();
@@ -147,6 +177,9 @@ public abstract class GameObject extends Actor {
             model2d.setFlip(true, false); // Flip horizontally
         } else {
             model2d.setFlip(false, false); // Reset flip
+        }
+        if(camera!=null) {
+            model.setProjectionMatrix(camera.combined);
         }
 
         model.draw(model2d, getX(), getY(), getHeight(), getWidth());

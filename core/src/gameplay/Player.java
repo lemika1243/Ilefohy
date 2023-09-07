@@ -3,6 +3,8 @@ package gameplay;
 import java.util.Vector;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Interpolation.Pow;
 
 public class Player extends GameObject{
 	boolean isMoving=false;
@@ -10,8 +12,11 @@ public class Player extends GameObject{
 	float temphurt=0f;
 	float timeDeath=0f;
 	float afterHurtDuration=2f;
+	float timejump=0.1f;
 	int hery=1;
 	boolean isHurt=false;
+	boolean isGrounded=true;
+	float jumpspeed=30;
 	Vector<Bala> bala=new Vector<Bala>();
 	
 	
@@ -26,7 +31,9 @@ public class Player extends GameObject{
 	
 	
 	//GET AND SET FUNCTIONS
-	
+	public void setJumpSpeed(float j) {
+		jumpspeed=j;
+	}
 	//END
 	
 	
@@ -76,6 +83,9 @@ public class Player extends GameObject{
             	isHurt=true;
             	tempanisa++;
             }
+            else if(ind==Keys.SPACE) {
+            	isGrounded=false;
+            }
 		}
     	maty();
     	if(mpanisa==0||mpanisa>=2) {
@@ -84,6 +94,7 @@ public class Player extends GameObject{
     	verifyMovingFlip();
     	verifyHurt();
     	verifyDeath();
+    	jumpFunction();
     }
 	//END
 	
@@ -158,6 +169,25 @@ public class Player extends GameObject{
 		}
 		else {
 			setLoopAnimation(true);
+		}
+	}
+	
+	public void jump() {
+		setAcceleration(-gravity);
+		float equation=((float) (1.1999*-Math.pow(timejump, 2)+timejump))*jumpspeed;
+		setY(getY()+equation);
+	}
+	
+	public void jumpFunction() {
+		if(!isGrounded) {
+			setTextures("Player/Biker_jump.png");
+			setFrame(6, 0.25f);
+			timejump+=deltaTime;
+			jump();
+			if(timejump>=animation.getAnimationDuration()-0.27f) {
+				isGrounded=true;
+				timejump=0;
+			}
 		}
 	}
 	//END
