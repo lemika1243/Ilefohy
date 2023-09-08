@@ -2,12 +2,13 @@ package gameplay;
 
 import java.util.Vector;
 
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ilefohy.game.Ilefohy;
 
 public class Bala extends GameObject{
 	int direction=1;
-	int speedball=12;
+	int speedball=50;
 	float duration;
 	float temporary;
 
@@ -21,6 +22,7 @@ public class Bala extends GameObject{
 		setFrame(4,25f);
 		temporary=0f;
 		duration=1;
+		body.setType(BodyType.KinematicBody);
 	}
 	//END
 	
@@ -81,14 +83,18 @@ public class Bala extends GameObject{
 	
 	@Override
 	public void move(Vector<Integer> keys) {
-		setX(getX()+getDirection());
-		if(temporary>=getDuration()) {
-			matyAnimation();
-		}
-		if(temporary>=getDuration()+0.25f) {
-			maty();
-		}
+
+	    // Set the body's velocity
+	    body.setLinearVelocity(getDirection(), body.getLinearVelocity().y);
+
+	    if (temporary >= getDuration()) {
+	        matyAnimation();
+	    }
+	    if (temporary >= getDuration() + 0.25f) {
+	        maty();
+	    }
 	}
+
 	
 	@Override
 	public void mitifitra(int key) {
@@ -102,7 +108,7 @@ public class Bala extends GameObject{
 	public void matyAnimation() {
 		setTextures("balaPotika.png");
 		setFrame(5,0.4f);
-		setX(getX()-(getDirection()));
+		body.setLinearVelocity(-getDirection(), body.getLinearVelocity().y);
 	}
 	@Override
 	public void hurt() {
