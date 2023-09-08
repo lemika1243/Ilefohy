@@ -9,13 +9,20 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.ilefohy.game.Ilefohy;
 
-public abstract class GameObject extends Actor {
-	float gravity=10f;
+public abstract class GameObject extends Sprite {
 	float acceleration=0;
     SpriteBatch model = new SpriteBatch();
-    Sprite model2d;
 	Texture textures;
 	TextureRegion[] frames;
 	Animation<TextureRegion> animation;
@@ -28,17 +35,22 @@ public abstract class GameObject extends Actor {
     boolean isDead=false;
     int hery=3;
     boolean loopedAnimation=true;
-    OrthographicCamera camera;
+    World world;
+    Body body;
+	boolean isGrounded=false;
+	Ilefohy ilefohy;
+	float shapeW=8.5f,shapeH=7;
     
     
 
     //CONSTRUCTORS
-    public GameObject(float x, float y, float w, float h) {
-        this.setPosition(x, y);
-        setHeight(h);
-        setWidth(w);
+    public GameObject(World wo,Ilefohy i) {
+        world=wo;
+        ilefohy=i;
+        defineMe();
         speed = 1;
         throughTime=0f;
+        setPosition(body.getPosition().x, body.getPosition().y);
     }
     //END
 
@@ -47,14 +59,17 @@ public abstract class GameObject extends Actor {
     
     
     //GET AND SET FUNCTIONS
-    public void setGravity(float g) {
-    	gravity=g;
+    public boolean isGrounded() {
+    	return isGrounded;
+    }
+    public void setIsGrounded(boolean t) {
+    	isGrounded=t;
+    }
+    public Body getBody() {
+    	return body;
     }
     public void setAcceleration(float a) {
     	acceleration=a;
-    }
-    public void setCamera(OrthographicCamera o) {
-    	camera=o;
     }
     public SpriteBatch getModel() {
         return model;
@@ -97,9 +112,6 @@ public abstract class GameObject extends Actor {
             frames[i] = new TextureRegion(textures, i * framewidth, 0, framewidth, frameheight);
 		}
     	setAnimation(new Animation<TextureRegion>(duration, frames));
-    	animation.setPlayMode(Animation.PlayMode.NORMAL); // Set to normal to ensure animation starts from the beginning
-    	animation.setFrameDuration(duration); // Reset the frame duration if necessary
-    	animation.getKeyFrame(0);
     }
     
     public void setAnimation(Animation<TextureRegion> a) {
@@ -159,9 +171,28 @@ public abstract class GameObject extends Actor {
     
     
     //UTILITY FUNCTIONS
+    
+    public void defineMe() {
+        setBounds(32, 32, shapeW, shapeH);
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyType.DynamicBody;
+        bodyDef.position.set(getX(), getY());
+        bodyDef.fixedRotation = true;
+        body = world.createBody(bodyDef);
+
+        PolygonShape playerShape = new PolygonShape();
+        playerShape.setAsBox(getWidth(), getHeight());
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = playerShape;
+        fixtureDef.density = 1.0f;
+
+        body.createFixture(fixtureDef);
+    }
+
     public void drawMe(float delta) {
         deltaTime = delta;
-        model.begin();
         throughTime += delta;
 
         if (loopedAnimation) {
@@ -169,39 +200,44 @@ public abstract class GameObject extends Actor {
         } else {
             finishAnimation();
         }
+        // Set the sprite's position to match the Box2D body's position
+        setBounds(ilefohy.getWidth()/2-(shapeW*10), ilefohy.getHeight()/2-(shapeH*10),1900,1900);
 
-        model2d = new Sprite(currentFrame);
+        if (textures != null)
+            this.setRegion(currentFrame);
 
         // Flip the image horizontally if needed
         if (flipHorizontally) {
-            model2d.setFlip(true, false); // Flip horizontally
+            this.setFlip(true, false); // Flip horizontally
         } else {
-            model2d.setFlip(false, false); // Reset flip
-        }
-        if(camera!=null) {
-            model.setProjectionMatrix(camera.combined);
+            this.setFlip(false, false); // Reset flip
         }
 
-        model.draw(model2d, getX(), getY(), getHeight(), getWidth());
+        model.begin();
+        model.draw(this, getX(), getY(), getHeight() / 10, getWidth() / 10);
         model.end();
     }
+
+    
+    
+    
     // MOVEMENT FUNCTION
     public void moveRight() {
-        float move = (float) (getX() + getSpeed());
-        setX(move);
+    	body.applyLinearImpulse(new Vector2(speed,0), body.getWorldCenter(), true);
         setFlipHorizontally(false);
     }
 
     public void moveLeft() {
-        float move = (float) (getX() - getSpeed());
-        setX(move);
+    	body.applyLinearImpulse(new Vector2(-speed,0), body.getWorldCenter(), true);
         setFlipHorizontally(true);
     }
     void finishAnimation() {
-    	currentFrame=animation.getKeyFrame(throughTime,false);
+    	if(animation!=null)
+    		currentFrame=animation.getKeyFrame(throughTime,false);
     }
     void loopAnimation() {
-        currentFrame = animation.getKeyFrame(throughTime, true);
+    	if(animation!=null)
+    		currentFrame = animation.getKeyFrame(throughTime, true);
     }
     // END
     //END

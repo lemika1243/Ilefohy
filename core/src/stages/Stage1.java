@@ -1,50 +1,67 @@
 package stages;
 
-import javax.swing.Renderer;
+import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ilefohy.game.Ilefohy;
 
 import ScreenMenu.ScreenMenu;
-import gameplay.GameObject;
 import gameplay.Player;
+import mpihaino.MpihainoCollision;
 import mpihaino.MpihainoFanalaHidy;
 
 public class Stage1 implements Screen {
 	ScreenMenu menu;
 	Ilefohy game;
 	Player player;
-	MpihainoFanalaHidy fanala;
 	OrthographicCamera camera;
 	TmxMapLoader tmxLoader;
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer ortho;
 	Viewport gameport;
+	World world; Box2DDebugRenderer box;
+	MpihainoFanalaHidy hidy=new MpihainoFanalaHidy();
+	MpihainoCollision contact;
+	
+	
 	public Stage1(ScreenMenu m) {
+		Gdx.input.setInputProcessor(hidy);
+		world = new World(new Vector2(0, -200), true);
+		box=new Box2DDebugRenderer();
+		player=new Player(world,m.getGames());
+		player.setSpeed(500);
+		contact=new MpihainoCollision(player);
+		world.setContactListener(contact);
 		menu=m;
-		game = menu.getGames(); 
-		player=new Player(0, 0,100,140);
-		player.setSpeed(5);
-		fanala=new MpihainoFanalaHidy();
-		Gdx.input.setInputProcessor(fanala);
+		game = menu.getGames();
 		camera=new OrthographicCamera();
-		gameport=new ScreenViewport(camera);
+		gameport=new FitViewport(m.getGames().getWidth()/10,m.getGames().getHeight()/10,camera);
 		tmxLoader=new TmxMapLoader();
 		tiledMap=tmxLoader.load("level1.tmx");
 		ortho=new OrthogonalTiledMapRenderer(tiledMap);
-		camera.position.set(gameport.getScreenWidth()/2,gameport.getScreenHeight()/2, 0);
+		camera.position.set(gameport.getWorldWidth()/2,gameport.getWorldHeight()/2, 0);
+		makeAllBoxCollider();
 	}
 
 @Override
@@ -54,15 +71,44 @@ public class Stage1 implements Screen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		player.drawMe(delta);
-		player.move(fanala.getIndexOfMovement());
-		player.mitifitra(fanala.getMouseKey());
-		player.getModel().setProjectionMatrix(camera.combined);
-		camera.update();
-		camera.position.set(player.getX(), player.getY(), 0);
-		ortho.setView(camera);
+	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	    handleGrounded(contact.getContacts());
+	    renderAll();
+	    player.move(hidy.getIndexOfMovement());
+	    player.drawMe(delta);
+	    player.handleMitifitra(hidy.getMouseKey());
+	    world.step(1/60f, 6, 2);
+	    camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
+	    camera.update();
+	    ortho.setView(camera);
+	}
+
+	
+	public void makeCollider(int index) {
+		BodyDef bodydef=new BodyDef();
+		PolygonShape shape=new PolygonShape();
+		FixtureDef fixture=new FixtureDef();
+		Body body;
+		for (MapObject object : tiledMap.getLayers().get(index).getObjects().getByType(RectangleMapObject.class)) {
+			Rectangle rec=((RectangleMapObject)object).getRectangle();
+			bodydef.type=BodyType.StaticBody;
+			bodydef.position.set(rec.getX()+rec.getWidth()/2,rec.getY()+rec.getHeight()/2);
+			body=world.createBody(bodydef);
+			shape.setAsBox(rec.getWidth()/2, rec.getHeight()/2);
+			fixture.shape=shape;
+			body.createFixture(fixture);
+		}
+	}
+	
+	public void renderAll() {
 		ortho.render();
+		box.render(world, camera.combined);
+	}
+	
+	public void makeAllBoxCollider() {
+		for (int i = 0; i < 6; i++) {
+			makeCollider(i);
+		}
 	}
 
 	public Ilefohy getPrincipalGame() {
@@ -72,6 +118,14 @@ public class Stage1 implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		gameport.update(width, height);
+	}
+	
+	public void handleGrounded(Vector<Contact> con) {
+		if(con.size()>0) {
+			player.setIsGrounded(true);
+		}else {
+			player.setIsGrounded(false);
+		}
 	}
 
 	@Override

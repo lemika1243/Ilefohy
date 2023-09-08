@@ -3,192 +3,129 @@ package gameplay;
 import java.util.Vector;
 
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Interpolation.Pow;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.ilefohy.game.Ilefohy;
+
 
 public class Player extends GameObject{
-	boolean isMoving=false;
-	int tempbala=0;
-	float temphurt=0f;
-	float timeDeath=0f;
-	float afterHurtDuration=2f;
-	float timejump=0.1f;
 	int hery=1;
-	boolean isHurt=false;
-	boolean isGrounded=true;
-	float jumpspeed=30;
+	float jumpspeed=10000000;
+	float speed=0.5f;
 	Vector<Bala> bala=new Vector<Bala>();
+	Ilefohy game;
+	int mpanisa=0;
 	
 	
 	//CONSTRUCTOR
-	public Player(float x, float y, float w, float h) {
-		super(x, y, w, h);
-        setTextures("Player/Biker_idle.png");
-        setFrame(4,0.25f);
+	public Player(World wo,Ilefohy i) {
+		super(wo,i);
+//        setTextures("Player/Biker_idle.png");
+//        setFrame(4,0.25f);
 	}
 	//END
-	
-	
-	
-	//GET AND SET FUNCTIONS
-	public void setJumpSpeed(float j) {
-		jumpspeed=j;
-	}
-	//END
+
 	
 	
 	
 	
-	//REDIFINITION OF ABSTRACT FUNCTIONS
+	//ABSTRACT FUNCTIONS
 	@Override
-	public void maty() {
-		if(hery==0) {
-			isDead=true;
+	public void move(Vector<Integer> keys) {
+		if(isGrounded) {
+	        setTextures("Player/Biker_idle.png");
+	        setFrame(4,0.25f);
+		}else {
+			jumpAnimation();
+		}
+		for (int i = 0; i < keys.size(); i++) {
+			int temp=keys.elementAt(i);
+			if((temp==Keys.A&&isGrounded)||(temp==Keys.D&&isGrounded)) {
+				movingAnimation();
+			}
+			if(temp==Keys.A) {
+				moveLeft();
+			}
+			if(temp==Keys.D) {
+				moveRight();
+			}
+			else if(temp==Keys.SPACE&&isGrounded) {
+				jump();
+			}
+		}
+		handleGrounded();
+	}
+	public void handleMitifitra(int key) {
+		handleMitifitra();
+		System.out.println(mpanisa);
+		if(key==0) {
+			mpanisa++;
+		}
+		if(mpanisa==1) {
+			bala.add(new Bala(world,ilefohy,getX(),getY(),flipHorizontally));
+		}
+		if(mpanisa>=2) {
+			mpanisa=0;
 		}
 	}
-	
-	public void matyAnimation() {
-		setTextures("Player/Biker_death.png");
-		setFrame(6,0.25f);
+
+
+	@Override
+	public void mitifitra(int key) {
+		// TODO Auto-generated method stub
+		
 	}
+
+
+	@Override
+	public void maty() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void matyAnimation() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	@Override
 	public void hurt() {
-		hery-=1;
+		// TODO Auto-generated method stub
+		
 	}
+
 
 	@Override
 	public void hurtAnimation() {
-		setTextures("Player/Biker_hurt.png");
-		setFrame(2,0.25f);
+		// TODO Auto-generated method stub
+		
 	}
-	
-	@Override
-	public void move(Vector<Integer> keys) {
-		int mpanisa=0;
-    	int tempanisa=0;
-    	for (int i = 0; i < keys.size(); i++) {
-    		int ind=keys.elementAt(i).intValue();
-            if (ind == Keys.D) {
-                isMoving=true;
-                mpanisa++;
-                moveRight();
-            }
-            else if (ind == Keys.A) {
-                moveLeft();
-                mpanisa++;
-                isMoving=true;
-            }
-            else if(ind==Keys.F&&tempanisa==0) {
-            	isHurt=true;
-            	tempanisa++;
-            }
-            else if(ind==Keys.SPACE) {
-            	isGrounded=false;
-            }
-		}
-    	maty();
-    	if(mpanisa==0||mpanisa>=2) {
-    		isMoving=false;
-    	}
-    	verifyMovingFlip();
-    	verifyHurt();
-    	verifyDeath();
-    	jumpFunction();
-    }
 	//END
 	
-	
-	
-	
-	
 	//UTILITY FUNCTIONS
-	public void mitifitra(int key) {
-        moveBala();
-        if(key==0) {
-        	Bala temp=new Bala(flipHorizontally, getX(), getY());
-        	tempbala++;
-    		setTextures("Player/Biker_attack3.png");
-    		setFrame(8,0.25f);
-        	if(tempbala==1) {
-            	bala.add(temp);
-        	}
-        }
-        else {
-        	tempbala=0;
-        }
+	public void jump() {
+    	body.applyLinearImpulse(new Vector2(0,jumpspeed), body.getWorldCenter(), true);
+	}
+	public void handleGrounded() {
+
+    }
+	public void movingAnimation() {
+        setTextures("Player/Biker_run.png");
+        setFrame(6,0.25f);
+	}
+	public void jumpAnimation() {
+        setTextures("Player/Biker_jump.png");
+        setFrame(6,0.25f);
 	}
 	
-	public void moveBala() {
+	public void handleMitifitra() {
 		for (int i = 0; i < bala.size(); i++) {
 			Bala temp=bala.elementAt(i);
-			if(temp.getIsDead()) {
-				bala.remove(i);
-			}
-			else {
-				temp.move();
-				temp.setTemps(temp.getTemps()+deltaTime);
-				temp.drawMe(deltaTime);
-			}
-		}
-	}
-
-	public void verifyMovingFlip() {
-		if (isMoving) {
-    		setTextures("Player/Biker_run.png");
-    		setFrame(6,0.25f);
-    	}else {
-    		setTextures("Player/Biker_idle.png");
-    		setFrame(4,0.25f);
-    	}
-	}
-	
-	public void verifyHurt() {
-		if(isHurt) {
-			if(temphurt<=afterHurtDuration) {
-	    		hurtAnimation();
-	    		temphurt+=deltaTime;
-	    		isHurt=true;
-			}
-			else {
-				temphurt=0;
-				hurt();
-	    		isHurt=false;
-			}
-		}
-	}
-	
-	public void verifyDeath() {
-		maty();
-		if(isDead) {
-			timeDeath+=deltaTime;
-			matyAnimation();
-			if(timeDeath>animation.getAnimationDuration()-1) {
-				setLoopAnimation(false);
-			}
-		}
-		else {
-			setLoopAnimation(true);
-		}
-	}
-	
-	public void jump() {
-		setAcceleration(-gravity);
-		float equation=((float) (1.1999*-Math.pow(timejump, 2)+timejump))*jumpspeed;
-		setY(getY()+equation);
-	}
-	
-	public void jumpFunction() {
-		if(!isGrounded) {
-			setTextures("Player/Biker_jump.png");
-			setFrame(6, 0.25f);
-			timejump+=deltaTime;
-			jump();
-			if(timejump>=animation.getAnimationDuration()-0.27f) {
-				isGrounded=true;
-				timejump=0;
-			}
+			temp.move(null);
+			temp.drawMe(deltaTime);
 		}
 	}
 	

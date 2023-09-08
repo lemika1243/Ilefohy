@@ -2,9 +2,8 @@ package gameplay;
 
 import java.util.Vector;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.World;
+import com.ilefohy.game.Ilefohy;
 
 public class Bala extends GameObject{
 	int direction=1;
@@ -13,8 +12,9 @@ public class Bala extends GameObject{
 	float temporary;
 
 	//CONSTRUCTORS
-	public Bala(boolean flip,float x, float y) {
-		super(x, y-100,200,200);
+	public Bala(World wo,Ilefohy i,float x,float y,boolean flip) {
+		super(wo,i);
+		setBounds(x, y, 10, 10);
 		flipHorizontally=flip;
 		setDirection(flip);
 		setTextures("balaAnimation.png");
@@ -80,7 +80,15 @@ public class Bala extends GameObject{
 	//REDEFINITION OF ABSTRACT FUNCTIONS
 	
 	@Override
-	public void move(Vector<Integer> keys) {}
+	public void move(Vector<Integer> keys) {
+		setX(getX()+getDirection());
+		if(temporary>=getDuration()) {
+			matyAnimation();
+		}
+		if(temporary>=getDuration()+0.25f) {
+			maty();
+		}
+	}
 	
 	@Override
 	public void mitifitra(int key) {
@@ -110,15 +118,6 @@ public class Bala extends GameObject{
 	
 	
 	//UTILITY FUNCTIONS
-	public void move() {
-		setX(getX()+getDirection());
-		if(temporary>=getDuration()) {
-			matyAnimation();
-		}
-		if(temporary>=getDuration()+0.25f) {
-			maty();
-		}
-	}
 
 	//END
 }
