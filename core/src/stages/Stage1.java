@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ilefohy.game.Ilefohy;
 
 import ScreenMenu.ScreenMenu;
+import gameplay.Bala;
 import gameplay.Player;
 import mpihaino.MpihainoCollision;
 import mpihaino.MpihainoFanalaHidy;
@@ -51,7 +52,7 @@ public class Stage1 implements Screen {
 		box=new Box2DDebugRenderer();
 		player=new Player(world,m.getGames());
 		player.setSpeed(500);
-		contact=new MpihainoCollision(player);
+		contact=new MpihainoCollision(world,player);
 		world.setContactListener(contact);
 		menu=m;
 		game = menu.getGames();
@@ -73,6 +74,7 @@ public class Stage1 implements Screen {
 	public void render(float delta) {
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    handleGrounded(contact.getContacts());
+	    handleBala();
 	    renderAll();
 	    player.move(hidy.getIndexOfMovement());
 	    player.drawMe(delta);
@@ -127,6 +129,12 @@ public class Stage1 implements Screen {
 			player.setIsGrounded(false);
 		}
 	}
+	public void handleBala() {
+		Vector<Bala> bala=contact.getBala();
+		for (int i = 0; i < bala.size(); i++) {
+			world.destroyBody(bala.elementAt(i).getBody());
+		}
+	}
 
 	@Override
 	public void pause() {
@@ -149,4 +157,5 @@ public class Stage1 implements Screen {
 	@Override
 	public void dispose() {
 	}
+	
 }

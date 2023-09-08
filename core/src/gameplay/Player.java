@@ -15,13 +15,21 @@ public class Player extends GameObject{
 	Vector<Bala> bala=new Vector<Bala>();
 	Ilefohy game;
 	int mpanisa=0;
+	boolean isMitifitra=false;
+	float timebala=0f;
 	
 	
 	//CONSTRUCTOR
 	public Player(World wo,Ilefohy i) {
 		super(wo,i);
-//        setTextures("Player/Biker_idle.png");
-//        setFrame(4,0.25f);
+	}
+	//END
+	
+	
+	
+	//SET AND GET FUNCTIONS
+	public Vector<Bala> getBala(){
+		return bala;
 	}
 	//END
 
@@ -54,18 +62,22 @@ public class Player extends GameObject{
 			}
 		}
 		handleGrounded();
+		
 	}
 	public void handleMitifitra(int key) {
 		handleMitifitra();
-		System.out.println(mpanisa);
 		if(key==0) {
+			isMitifitra=true;
+		}
+		if(isMitifitra) {
 			mpanisa++;
+			Bala temp=new Bala(world,ilefohy,getX(),getY(),flipHorizontally);
+			temp.setScale(12,12);
+			temp.setTemps(timebala+deltaTime);
+			bala.add(temp);
 		}
-		if(mpanisa==1) {
-			bala.add(new Bala(world,ilefohy,getX(),getY(),flipHorizontally));
-		}
-		if(mpanisa>=2) {
-			mpanisa=0;
+		if(mpanisa>0) {
+			isMitifitra=false;
 		}
 	}
 
@@ -124,8 +136,8 @@ public class Player extends GameObject{
 	public void handleMitifitra() {
 		for (int i = 0; i < bala.size(); i++) {
 			Bala temp=bala.elementAt(i);
-			temp.move(null);
 			temp.drawMe(deltaTime);
+			temp.move(null);
 		}
 	}
 	

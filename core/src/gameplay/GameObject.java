@@ -146,6 +146,9 @@ public abstract class GameObject extends Sprite {
             }
         }
     }
+    public void setScale(float w,float h) {
+    	shapeW=w;shapeH=h;
+    }
 
     
     //END
@@ -201,7 +204,7 @@ public abstract class GameObject extends Sprite {
             finishAnimation();
         }
         // Set the sprite's position to match the Box2D body's position
-        setBounds(ilefohy.getWidth()/2-(shapeW*10), ilefohy.getHeight()/2-(shapeH*10),1900,1900);
+        setBounds(ilefohy.getWidth()/2-(shapeW*2), ilefohy.getHeight()/2-(shapeH*16),1900,1900);
 
         if (textures != null)
             this.setRegion(currentFrame);
