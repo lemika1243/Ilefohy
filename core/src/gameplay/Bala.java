@@ -4,25 +4,28 @@ import java.util.Vector;
 
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
-import com.ilefohy.game.Ilefohy;
 
 public class Bala extends GameObject{
 	int direction=1;
-	int speedball=50;
+	int speedball=500;
 	float duration;
 	float temporary;
+	float TafterCollide=0f;
+	Player player;
 
 	//CONSTRUCTORS
-	public Bala(World wo,Ilefohy i,float x,float y,boolean flip) {
-		super(wo,i);
-		setBounds(x, y, 10, 10);
-		flipHorizontally=flip;
-		setDirection(flip);
+	public Bala(World wo,Player p) {
+		super(wo,p.ilefohy,p.getCamera());
+		player=p;
+		setShape(2, 2);
+		width=10;height=10;
+		flipHorizontally=player.isFliped();
+		setDirection(player.isFliped());
 		setTextures("balaAnimation.png");
-		setFrame(4,25f);
-		temporary=0f;
-		duration=1;
-		body.setType(BodyType.KinematicBody);
+		setFrame(1, 0.25f);
+		defineMe(BodyType.DynamicBody,player.getBody().getPosition().x+(1*getDirection()),player.getBody().getPosition().y+(7));
+		body.setFixedRotation(false);
+		body.setBullet(true);
 	}
 	//END
 	
@@ -31,7 +34,9 @@ public class Bala extends GameObject{
 	
 	
 	//GET AND SET FUNCTIONS
-	
+	public void setAfterCollide(float a) {
+		TafterCollide=a;
+	}
 	public int getDirection() {
 		return direction;
 	}
@@ -46,9 +51,9 @@ public class Bala extends GameObject{
 	
 	public void setDirection(boolean flip) {
 		if(flip) {
-			direction=-speedball;
+			direction=-1;
 		}else {
-			direction=speedball;
+			direction=1;
 		}
 	}
 	
@@ -80,19 +85,11 @@ public class Bala extends GameObject{
 	
 	
 	//REDEFINITION OF ABSTRACT FUNCTIONS
-	
+
+
 	@Override
 	public void move(Vector<Integer> keys) {
-
-	    // Set the body's velocity
-	    body.setLinearVelocity(getDirection(), body.getLinearVelocity().y);
-
-	    if (temporary >= getDuration()) {
-	        matyAnimation();
-	    }
-	    if (temporary >= getDuration() + 0.25f) {
-	        maty();
-	    }
+	    body.setLinearVelocity(getDirection()*speedball,0);
 	}
 
 	
@@ -102,13 +99,13 @@ public class Bala extends GameObject{
 
 	@Override
 	public void maty() {
-		setIsDead(true);
+		world.destroyBody(body);
 	}
 	
 	public void matyAnimation() {
 		setTextures("balaPotika.png");
 		setFrame(5,0.4f);
-		body.setLinearVelocity(-getDirection(), body.getLinearVelocity().y);
+		body.setLinearVelocity(-getDirection()*speedball, body.getLinearVelocity().y);
 	}
 	@Override
 	public void hurt() {
@@ -124,6 +121,5 @@ public class Bala extends GameObject{
 	
 	
 	//UTILITY FUNCTIONS
-
 	//END
 }

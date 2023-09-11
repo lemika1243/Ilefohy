@@ -13,11 +13,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ilefohy.game.Ilefohy;
 
 public abstract class GameObject extends Sprite {
@@ -39,18 +37,20 @@ public abstract class GameObject extends Sprite {
     Body body;
 	boolean isGrounded=false;
 	Ilefohy ilefohy;
-	float shapeW=8.5f,shapeH=7;
-    
+	float shapeW,shapeH;
+
+	int width=20,height=20;
+	float WH;
+	OrthographicCamera camera;
     
 
     //CONSTRUCTORS
-    public GameObject(World wo,Ilefohy i) {
+    public GameObject(World wo,Ilefohy i,OrthographicCamera cam) {
         world=wo;
+        camera=cam;
         ilefohy=i;
-        defineMe();
         speed = 1;
         throughTime=0f;
-        setPosition(body.getPosition().x, body.getPosition().y);
     }
     //END
 
@@ -59,6 +59,18 @@ public abstract class GameObject extends Sprite {
     
     
     //GET AND SET FUNCTIONS
+    public OrthographicCamera getCamera() {
+    	return camera;
+    }
+    public boolean isFliped() {
+    	return flipHorizontally;
+    }
+    public void setWidth(int w) {
+    	width=w;
+    }
+    public void setHeight(int h) {
+    	height=h;
+    }
     public boolean isGrounded() {
     	return isGrounded;
     }
@@ -146,7 +158,7 @@ public abstract class GameObject extends Sprite {
             }
         }
     }
-    public void setScale(float w,float h) {
+    public void setShape(float w,float h) {
     	shapeW=w;shapeH=h;
     }
 
@@ -175,11 +187,12 @@ public abstract class GameObject extends Sprite {
     
     //UTILITY FUNCTIONS
     
-    public void defineMe() {
-        setBounds(32, 32, shapeW, shapeH);
+    public void defineMe(BodyType type, float x, float y) {
 
+        WH=(shapeH*2000)/7;
+        setBounds(x, y, shapeW, shapeH);
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyType.DynamicBody;
+        bodyDef.type = type;
         bodyDef.position.set(getX(), getY());
         bodyDef.fixedRotation = true;
         body = world.createBody(bodyDef);
@@ -197,14 +210,13 @@ public abstract class GameObject extends Sprite {
     public void drawMe(float delta) {
         deltaTime = delta;
         throughTime += delta;
-
+        model.setProjectionMatrix(camera.combined);
         if (loopedAnimation) {
             loopAnimation();
         } else {
             finishAnimation();
         }
         // Set the sprite's position to match the Box2D body's position
-        setBounds(ilefohy.getWidth()/2-(shapeW*2), ilefohy.getHeight()/2-(shapeH*16),1900,1900);
 
         if (textures != null)
             this.setRegion(currentFrame);
@@ -216,8 +228,9 @@ public abstract class GameObject extends Sprite {
             this.setFlip(false, false); // Reset flip
         }
 
+        setBounds(ilefohy.getWidth()/2-shapeW*2, ilefohy.getHeight()/2-shapeW*14,WH,WH);
         model.begin();
-        model.draw(this, getX(), getY(), getHeight() / 10, getWidth() / 10);
+        model.draw(this, body.getPosition().x-shapeW, body.getPosition().y-shapeH, width, height);
         model.end();
     }
 

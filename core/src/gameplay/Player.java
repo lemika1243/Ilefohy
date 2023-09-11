@@ -3,25 +3,31 @@ package gameplay;
 import java.util.Vector;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ilefohy.game.Ilefohy;
 
 
 public class Player extends GameObject{
-	int hery=1;
-	float jumpspeed=10000000;
+	int hery=3;
+	float jumpspeed=1500;
 	float speed=0.5f;
 	Vector<Bala> bala=new Vector<Bala>();
-	Ilefohy game;
 	int mpanisa=0;
 	boolean isMitifitra=false;
-	float timebala=0f;
+	boolean isHurt=false;
+	float hurtTime=0f;
+	
+	float afterHurtDuration=2f;
 	
 	
 	//CONSTRUCTOR
-	public Player(World wo,Ilefohy i) {
-		super(wo,i);
+	public Player(World wo,Ilefohy i,OrthographicCamera cam) {
+		super(wo,i,cam);
+        setShape(8.5f, 7f);
+		defineMe(BodyType.DynamicBody,32,32);
 	}
 	//END
 	
@@ -30,6 +36,9 @@ public class Player extends GameObject{
 	//SET AND GET FUNCTIONS
 	public Vector<Bala> getBala(){
 		return bala;
+	}
+	public void setHurt(boolean a) {
+		isHurt=a;
 	}
 	//END
 
@@ -61,23 +70,26 @@ public class Player extends GameObject{
 				jump();
 			}
 		}
+		System.out.println(hery);
 		handleGrounded();
+		handleHurt();
+		handleFahafatesana();
 		
 	}
 	public void handleMitifitra(int key) {
 		handleMitifitra();
 		if(key==0) {
 			isMitifitra=true;
-		}
-		if(isMitifitra) {
 			mpanisa++;
-			Bala temp=new Bala(world,ilefohy,getX(),getY(),flipHorizontally);
-			temp.setScale(12,12);
-			temp.setTemps(timebala+deltaTime);
+		}
+		if(isMitifitra&&mpanisa==1) {
+			mpanisa++;
+			Bala temp=new Bala(world,this);
 			bala.add(temp);
 		}
-		if(mpanisa>0) {
+		if(mpanisa>8) {
 			isMitifitra=false;
+			mpanisa=0;
 		}
 	}
 
@@ -91,35 +103,47 @@ public class Player extends GameObject{
 
 	@Override
 	public void maty() {
-		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
 	public void matyAnimation() {
-		// TODO Auto-generated method stub
-		
+		setTextures("Player/Biker_death.png");
+		setFrame(6,0.25f);
+		setLoopAnimation(false);
 	}
 
 
 	@Override
 	public void hurt() {
-		// TODO Auto-generated method stub
-		
+		if(hurtTime>=0.1f&&hurtTime<=0.117f) {
+			hery-=1;
+		}
+		else if(hurtTime>=afterHurtDuration) {
+			hurtTime=0f;
+			isHurt=false;
+		}
+		hurtTime+=deltaTime;
 	}
 
 
 	@Override
 	public void hurtAnimation() {
-		// TODO Auto-generated method stub
-		
+		setTextures("Player/Biker_hurt.png");
+		setFrame(2,0.25f);
 	}
 	//END
 	
 	//UTILITY FUNCTIONS
+	public void handleHurt() {
+		if(isHurt) {
+			hurt();
+			hurtAnimation();
+		}
+	}
 	public void jump() {
-    	body.applyLinearImpulse(new Vector2(0,jumpspeed), body.getWorldCenter(), true);
+    	body.setLinearVelocity(new Vector2(0, jumpspeed));
 	}
 	public void handleGrounded() {
 
@@ -138,6 +162,12 @@ public class Player extends GameObject{
 			Bala temp=bala.elementAt(i);
 			temp.drawMe(deltaTime);
 			temp.move(null);
+		}
+	}
+	public void handleFahafatesana() {
+		if(hery<=0) {
+			matyAnimation();
+			maty();
 		}
 	}
 	
