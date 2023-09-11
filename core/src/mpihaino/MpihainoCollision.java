@@ -28,14 +28,15 @@ public class MpihainoCollision implements ContactListener {
 	public void beginContact(Contact contact) {
 		contactList.add(contact);
 		if(gameObject instanceof Player) {
+			bulletCollide(contact);
 			Vector<Bala> bala=((Player)gameObject).getBala();
 			for (int i = 0; i < bala.size(); i++) {
 				Bala temp=bala.elementAt(i);
 				Fixture a=contact.getFixtureA();
 				Fixture b=contact.getFixtureB();
-				if(temp.getBody()==a.getBody()||temp.getBody()==b.getBody()) {
-					bala.remove(i);
+				if(temp.getBody().equals(a.getBody())||temp.getBody().equals(b.getBody())) {
 					balaPotika.add(temp);
+					bala.remove(i);
 				}
 			}
 		}
@@ -63,4 +64,17 @@ public class MpihainoCollision implements ContactListener {
 	public Vector<Bala> getBala(){
 		return balaPotika;
 	}
+	
+	//VERIFY IF GAMEOBJECT IS HIT BY A BULLET
+	public void bulletCollide(Contact con) {
+		Fixture a=con.getFixtureA();
+		Fixture b=con.getFixtureB();
+		Player player=(Player)gameObject;
+		if((a.getBody().equals(player.getBody())||b.getBody().equals(player.getBody()))
+				&&(a.getBody().isBullet()||b.getBody().isBullet())) {
+			player.setHurt(true);
+			System.out.println("hurted");
+		}
+	}
+	//END
 }
