@@ -2,12 +2,12 @@ package gameplay;
 
 import java.util.Vector;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Bala extends GameObject{
 	int direction=1;
-	int speedball=500;
 	float duration;
 	float temporary;
 	float TafterCollide=0f;
@@ -16,6 +16,7 @@ public class Bala extends GameObject{
 	//CONSTRUCTORS
 	public Bala(World wo,Player p) {
 		super(wo,p.ilefohy,p.getCamera());
+		setSpeed(1000);
 		player=p;
 		setShape(2, 2);
 		width=10;height=10;
@@ -23,7 +24,8 @@ public class Bala extends GameObject{
 		setDirection(player.isFliped());
 		setTextures("balaAnimation.png");
 		setFrame(1, 0.25f);
-		defineMe(BodyType.DynamicBody,player.getBody().getPosition().x+(1*getDirection()),player.getBody().getPosition().y+(7));
+		setPosition(player.getBody().getPosition().x+(16*getDirection()),player.getBody().getPosition().y+(7));
+		defineMe(BodyType.DynamicBody);
 		body.setFixedRotation(false);
 		body.setBullet(true);
 	}
@@ -43,10 +45,6 @@ public class Bala extends GameObject{
 	
 	public void setDirection(int i) {
 		direction=i;
-	}
-	
-	public void setSpeedBall(int i) {
-		speedball=i;
 	}
 	
 	public void setDirection(boolean flip) {
@@ -89,7 +87,7 @@ public class Bala extends GameObject{
 
 	@Override
 	public void move(Vector<Integer> keys) {
-	    body.setLinearVelocity(getDirection()*speedball,0);
+	    body.applyLinearImpulse(new Vector2(getDirection()*speed,0),body.getWorldCenter(),true);
 	}
 
 	
@@ -105,7 +103,7 @@ public class Bala extends GameObject{
 	public void matyAnimation() {
 		setTextures("balaPotika.png");
 		setFrame(5,0.4f);
-		body.setLinearVelocity(-getDirection()*speedball, body.getLinearVelocity().y);
+		body.setLinearVelocity(-getDirection()*speed, body.getLinearVelocity().y);
 	}
 	@Override
 	public void hurt() {

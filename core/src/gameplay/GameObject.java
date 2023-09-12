@@ -49,7 +49,6 @@ public abstract class GameObject extends Sprite {
         world=wo;
         camera=cam;
         ilefohy=i;
-        speed = 1;
         throughTime=0f;
     }
     //END
@@ -59,6 +58,12 @@ public abstract class GameObject extends Sprite {
     
     
     //GET AND SET FUNCTIONS
+    public Vector2 getPosition() {
+    	return body.getPosition();
+    }
+    public void setPosition(Vector2 v) {
+    	body.getPosition().set(v);
+    }
     public OrthographicCamera getCamera() {
     	return camera;
     }
@@ -187,10 +192,10 @@ public abstract class GameObject extends Sprite {
     
     //UTILITY FUNCTIONS
     
-    public void defineMe(BodyType type, float x, float y) {
+    public void defineMe(BodyType type) {
 
         WH=(shapeH*2000)/7;
-        setBounds(x, y, shapeW, shapeH);
+        setBounds(getX(), getY(), shapeW, shapeH);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = type;
         bodyDef.position.set(getX(), getY());
@@ -207,7 +212,7 @@ public abstract class GameObject extends Sprite {
         body.createFixture(fixtureDef);
     }
 
-    public void drawMe(float delta) {
+    public void drawMe(float delta,int adjust) {
         deltaTime = delta;
         throughTime += delta;
         model.setProjectionMatrix(camera.combined);
@@ -228,9 +233,8 @@ public abstract class GameObject extends Sprite {
             this.setFlip(false, false); // Reset flip
         }
 
-        setBounds(ilefohy.getWidth()/2-shapeW*2, ilefohy.getHeight()/2-shapeW*14,WH,WH);
         model.begin();
-        model.draw(this, body.getPosition().x-shapeW, body.getPosition().y-shapeH, width, height);
+        model.draw(this, body.getPosition().x-adjust*shapeW, body.getPosition().y-adjust*shapeH, width, height);
         model.end();
     }
 
