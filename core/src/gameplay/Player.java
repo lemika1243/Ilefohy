@@ -13,7 +13,6 @@ import com.ilefohy.game.Ilefohy;
 public class Player extends GameObject{
 	int hery=3;
 	float jumpspeed=1500;
-	float speed=0.5f;
 	Vector<Bala> bala=new Vector<Bala>();
 	int mpanisa=0;
 	boolean isMitifitra=false;
@@ -26,8 +25,9 @@ public class Player extends GameObject{
 	//CONSTRUCTOR
 	public Player(World wo,Ilefohy i,OrthographicCamera cam) {
 		super(wo,i,cam);
-        setShape(8.5f, 7f);
-		defineMe(BodyType.DynamicBody,32,32);
+        setShape(3.5f, 7f);
+        setPosition(32,32);
+		defineMe(BodyType.DynamicBody);
 	}
 	//END
 	
@@ -47,6 +47,34 @@ public class Player extends GameObject{
 	
 	
 	//ABSTRACT FUNCTIONS
+    public void drawMe(float delta,int adjust) {
+        deltaTime = delta;
+        throughTime += delta;
+        model.setProjectionMatrix(camera.combined);
+        if (loopedAnimation) {
+            loopAnimation();
+        } else {
+            finishAnimation();
+        }
+        // Set the sprite's position to match the Box2D body's position
+
+        if (textures != null)
+            this.setRegion(currentFrame);
+
+
+        model.begin();
+        // Flip the image horizontally if needed
+        if (flipHorizontally) {
+            this.setFlip(true, false); // Flip horizontally
+            model.draw(this, body.getPosition().x-3.5f*adjust*shapeW, body.getPosition().y-adjust*shapeH, width, height);
+        } else {
+            this.setFlip(false, false); // Reset flip
+            model.draw(this, body.getPosition().x-1.5f*adjust*shapeW, body.getPosition().y-adjust*shapeH, width, height);
+        }
+        model.end();
+    }
+
+    
 	@Override
 	public void move(Vector<Integer> keys) {
 		if(isGrounded) {
@@ -70,7 +98,6 @@ public class Player extends GameObject{
 				jump();
 			}
 		}
-		System.out.println(hery);
 		handleGrounded();
 		handleHurt();
 		handleFahafatesana();
@@ -160,7 +187,7 @@ public class Player extends GameObject{
 	public void handleMitifitra() {
 		for (int i = 0; i < bala.size(); i++) {
 			Bala temp=bala.elementAt(i);
-			temp.drawMe(deltaTime);
+			temp.drawMe(deltaTime,1);
 			temp.move(null);
 		}
 	}

@@ -26,6 +26,7 @@ import com.ilefohy.game.Ilefohy;
 
 import ScreenMenu.ScreenMenu;
 import gameplay.Bala;
+import gameplay.Flyer;
 import gameplay.Player;
 import mpihaino.MpihainoCollision;
 import mpihaino.MpihainoFanalaHidy;
@@ -42,6 +43,7 @@ public class Stage1 implements Screen {
 	World world; Box2DDebugRenderer box;
 	MpihainoFanalaHidy hidy=new MpihainoFanalaHidy();
 	MpihainoCollision contact;
+	Flyer f;
 	
 	
 	public Stage1(ScreenMenu m) {
@@ -51,7 +53,7 @@ public class Stage1 implements Screen {
 		world = new World(new Vector2(0, -200), true);
 		box=new Box2DDebugRenderer();
 		player=new Player(world,m.getGames(),camera);
-		player.setSpeed(500);
+		player.setSpeed(200);
 		contact=new MpihainoCollision(world,player);
 		world.setContactListener(contact);
 		menu=m;
@@ -61,6 +63,7 @@ public class Stage1 implements Screen {
 		ortho=new OrthogonalTiledMapRenderer(tiledMap);
 		camera.position.set(gameport.getWorldWidth()/2,gameport.getWorldHeight()/2, 0);
 		makeAllBoxCollider();
+		f=new Flyer(world, game, player, camera);
 	}
 
 @Override
@@ -73,8 +76,10 @@ public class Stage1 implements Screen {
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    handleGrounded();
 	    renderAll();
+	    f.move();
+	    f.drawMe(delta, f.getAdjustImage());
 	    player.move(hidy.getIndexOfMovement());
-	    player.drawMe(delta);
+	    player.drawMe(delta,1);
 	    player.handleMitifitra(hidy.getMouseKey());
 	    handleBala();
 	    world.step(1/60f, 6, 2);
