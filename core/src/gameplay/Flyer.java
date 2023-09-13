@@ -10,6 +10,7 @@ public class Flyer extends Fahavalo{
 
 	public Flyer(World wo, Ilefohy i, Player player,OrthographicCamera cam) {
 		super(wo, i, player, cam);
+		setDetectionRange(40f);
 		setShape(2, 2);
 		setSpeed(2);
 		width=40;height=40;
@@ -25,16 +26,18 @@ public class Flyer extends Fahavalo{
 	
 	
 	public void move() {
-		setTextures("Enemies/Flyingeye/Attack3.png");
-		setFrame(6,0.25f);
-		float xtarget=player.getPosition().x-getPosition().x;
-		float ytarget=player.getPosition().y-getPosition().y;
-		Vector2 target=new Vector2(speed*xtarget/4,speed*ytarget/4+4);
-		if(target.x<0) 
-			setFlipHorizontally(true);
-		else
-			setFlipHorizontally(false);
-		body.setLinearVelocity(target);
+		handleDetection();
+		System.out.println("detection : "+detectRange);
+		System.out.println("target : "+Math.abs(target.x));
+		if(playerDetected) {
+			setTextures("Enemies/Flyingeye/Attack3.png");
+			setFrame(6,0.25f);
+			if(target.x<0) 
+				setFlipHorizontally(true);
+			else
+				setFlipHorizontally(false);
+			body.setLinearVelocity(target);
+		}
 	}
 	
 
