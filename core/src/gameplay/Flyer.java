@@ -27,8 +27,6 @@ public class Flyer extends Fahavalo{
 	
 	public void move() {
 		handleDetection();
-		System.out.println("detection : "+detectRange);
-		System.out.println("target : "+Math.abs(target.x));
 		if(playerDetected) {
 			setTextures("Enemies/Flyingeye/Attack3.png");
 			setFrame(6,0.25f);
