@@ -27,6 +27,7 @@ public class Player extends GameObject{
 		super(wo,i,cam);
         setShape(3.5f, 7f);
         setPosition(32,32);
+        setSpeed(150);
 		defineMe(BodyType.DynamicBody);
 	}
 	//END
@@ -114,7 +115,7 @@ public class Player extends GameObject{
 			Bala temp=new Bala(world,this);
 			bala.add(temp);
 		}
-		if(mpanisa>8) {
+		if(mpanisa>10) {
 			isMitifitra=false;
 			mpanisa=0;
 		}

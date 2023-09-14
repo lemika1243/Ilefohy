@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.ilefohy.game.Ilefohy;
 
+import mpanampy.VectorialCalculus;
+
 public class Fahavalo extends GameObject{
 	
 	float timeOfReflection;
@@ -87,7 +89,7 @@ public class Fahavalo extends GameObject{
 		float xtarget=player.getPosition().x-getPosition().x;
 		float ytarget=player.getPosition().y-getPosition().y;
 		target=new Vector2(speed*xtarget/4,speed*ytarget/4+4);
-		Vector2 tempTarget=new Vector2(Math.abs(target.x), Math.abs(target.y));
+		Vector2 tempTarget=VectorialCalculus.abs(target);
 		if(tempTarget.x<=detectRange&&tempTarget.y<=detectRange) {
 			playerDetected=true;
 		}else {

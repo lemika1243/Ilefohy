@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -44,26 +46,30 @@ public class Stage1 implements Screen {
 	MpihainoFanalaHidy hidy=new MpihainoFanalaHidy();
 	MpihainoCollision contact;
 	Flyer f;
+	ParticleEffect particle=new ParticleEffect();
+	SpriteBatch batch=new SpriteBatch();
+	float deltaTime=0f;
 	
 	
 	public Stage1(ScreenMenu m) {
 		game = m.getGames();
 		Gdx.input.setInputProcessor(hidy);
 		camera=new OrthographicCamera();
-		world = new World(new Vector2(0, -200), true);
+		world = new World(new Vector2(0, -50), true);
 		box=new Box2DDebugRenderer();
 		player=new Player(world,m.getGames(),camera);
-		player.setSpeed(200);
 		contact=new MpihainoCollision(world,player);
 		world.setContactListener(contact);
 		menu=m;
-		gameport=new FitViewport(m.getGames().getWidth()/10,m.getGames().getHeight()/10,camera);
+		gameport=new FitViewport(m.getGames().getWidth()/7,m.getGames().getHeight()/7,camera);
 		tmxLoader=new TmxMapLoader();
 		tiledMap=tmxLoader.load("level1.tmx");
 		ortho=new OrthogonalTiledMapRenderer(tiledMap);
 		camera.position.set(gameport.getWorldWidth()/2,gameport.getWorldHeight()/2, 0);
-		makeAllBoxCollider();
 		f=new Flyer(world, game, player, camera);
+		particle.load(Gdx.files.internal("bulletParticle.p"), Gdx.files.internal(""));
+	    particle.scaleEffect(0.1f);
+		makeAllBoxCollider();
 	}
 
 @Override
@@ -73,6 +79,7 @@ public class Stage1 implements Screen {
 
 	@Override
 	public void render(float delta) {
+		deltaTime=delta;
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    handleGrounded();
 	    renderAll();
@@ -82,7 +89,7 @@ public class Stage1 implements Screen {
 	    player.drawMe(delta,1);
 	    player.handleMitifitra(hidy.getMouseKey());
 	    handleBala();
-	    world.step(1/60f, 6, 2);
+	    world.step(1/30f, 6, 2);
 	    camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);
 	    camera.update();
 	    ortho.setView(camera);
@@ -133,12 +140,25 @@ public class Stage1 implements Screen {
 		}
 	}
 	public void handleBala() {
+	    particle.update(deltaTime);
 		Vector<Bala> ball=contact.getBala();
 		int count=ball.size();
-		for(int i=0;i<count;i++) {
-			ball.elementAt(i).maty();
-			ball.remove(i);
+		if (count >= 1) {
+		    Bala bala = ball.elementAt(0);
+
+		    // Set the position of the particle effect
+		    particle.setPosition(bala.getBody().getPosition().x, bala.getBody().getPosition().y);
+		    particle.reset(false);
+		    
+
+	        ball.elementAt(0).maty();
+	        ball.remove(0);
 		}
+	    batch.setProjectionMatrix(camera.combined);
+	    batch.begin();
+	    particle.draw(batch);
+	    batch.end();
+
 	}
 
 	@Override

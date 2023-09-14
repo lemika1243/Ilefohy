@@ -73,7 +73,6 @@ public class MpihainoCollision implements ContactListener {
 		if((a.getBody().equals(player.getBody())||b.getBody().equals(player.getBody()))
 				&&(a.getBody().isBullet()||b.getBody().isBullet())) {
 			player.setHurt(true);
-			System.out.println("hurted");
 		}
 	}
 	//END

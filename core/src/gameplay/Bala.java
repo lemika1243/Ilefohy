@@ -24,7 +24,7 @@ public class Bala extends GameObject{
 		setDirection(player.isFliped());
 		setTextures("balaAnimation.png");
 		setFrame(1, 0.25f);
-		setPosition(player.getBody().getPosition().x+(16*getDirection()),player.getBody().getPosition().y+(7));
+		setPosition(player.getBody().getPosition().x+(7*getDirection()),player.getBody().getPosition().y+(7));
 		defineMe(BodyType.DynamicBody);
 		body.setFixedRotation(false);
 		body.setBullet(true);
