@@ -40,7 +40,6 @@ public abstract class GameObject extends Sprite {
 	float shapeW,shapeH;
 
 	int width=20,height=20;
-	float WH;
 	OrthographicCamera camera;
     
 
@@ -58,6 +57,9 @@ public abstract class GameObject extends Sprite {
     
     
     //GET AND SET FUNCTIONS
+    public World getWorld() {
+    	return world;
+    }
     public Vector2 getPosition() {
     	return body.getPosition();
     }
@@ -69,6 +71,12 @@ public abstract class GameObject extends Sprite {
     }
     public boolean isFliped() {
     	return flipHorizontally;
+    }
+    public int getW() {
+    	return width;
+    }
+    public int getH() {
+    	return height;
     }
     public void setWidth(int w) {
     	width=w;
@@ -194,7 +202,6 @@ public abstract class GameObject extends Sprite {
     
     public void defineMe(BodyType type) {
 
-        WH=(shapeH*2000)/7;
         setBounds(getX(), getY(), shapeW, shapeH);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = type;

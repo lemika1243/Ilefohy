@@ -1,4 +1,4 @@
-package gameplay;
+package gameplay.fahavalo;
 
 import java.util.Vector;
 
@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.ilefohy.game.Ilefohy;
 
-import mpanampy.VectorialCalculus;
+import gameplay.*;
 
-public class Fahavalo extends GameObject{
+public abstract class Fahavalo extends GameObject{
 	
 	float timeOfReflection;
 	Vector<Bala> bala=new Vector<Bala>();
@@ -18,6 +18,7 @@ public class Fahavalo extends GameObject{
 	boolean playerDetected=false;
 	float detectRange;
 	Vector2 target=new Vector2();
+	Vector2 targetRange=new Vector2();
 	
 	//CONSTRUCTORS
 	public Fahavalo(World wo, Ilefohy i, Player p,OrthographicCamera cam) {
@@ -26,9 +27,12 @@ public class Fahavalo extends GameObject{
 		setShape(5, 5);
         setPosition(p.getX()+100,32);
 		defineMe(BodyType.DynamicBody);
-		body.setBullet(true);
+		getBody().setBullet(true);
+		getBody().setUserData("fahavalo");
 	}
 	//END
+	
+	public abstract void move();
 	
 	
 	
@@ -63,7 +67,7 @@ public class Fahavalo extends GameObject{
 
 	@Override
 	public void maty() {
-		world.destroyBody(body);
+		getWorld().destroyBody(getBody());
 	}
 
 	@Override
@@ -88,9 +92,9 @@ public class Fahavalo extends GameObject{
 	public void handleDetection() {
 		float xtarget=player.getPosition().x-getPosition().x;
 		float ytarget=player.getPosition().y-getPosition().y;
-		target=new Vector2(speed*xtarget/4,speed*ytarget/4+4);
-		Vector2 tempTarget=VectorialCalculus.abs(target);
-		if(tempTarget.x<=detectRange&&tempTarget.y<=detectRange) {
+		target.x=(xtarget/4); target.y=(ytarget/4)+4;
+		targetRange.x=Math.abs(target.x); targetRange.y=Math.abs(target.y);
+		if(targetRange.x<detectRange&&targetRange.y<detectRange) {
 			playerDetected=true;
 		}else {
 			playerDetected=false;

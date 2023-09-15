@@ -28,8 +28,8 @@ import com.ilefohy.game.Ilefohy;
 
 import ScreenMenu.ScreenMenu;
 import gameplay.Bala;
-import gameplay.Flyer;
 import gameplay.Player;
+import gameplay.fahavalo.Flyer;
 import mpihaino.MpihainoCollision;
 import mpihaino.MpihainoFanalaHidy;
 
@@ -114,7 +114,7 @@ public class Stage1 implements Screen {
 	
 	public void renderAll() {
 		ortho.render();
-//		box.render(world, camera.combined);
+		box.render(world, camera.combined);
 	}
 	
 	public void makeAllBoxCollider() {

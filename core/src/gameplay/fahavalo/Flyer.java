@@ -1,19 +1,19 @@
-package gameplay;
+package gameplay.fahavalo;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ilefohy.game.Ilefohy;
 
+import gameplay.Player;
+
 public class Flyer extends Fahavalo{
-	int adjust=10;
+	int adjust=8;
 
 	public Flyer(World wo, Ilefohy i, Player player,OrthographicCamera cam) {
 		super(wo, i, player, cam);
-		setDetectionRange(40f);
+		setDetectionRange(20f);
 		setShape(2, 2);
-		setSpeed(2);
-		width=40;height=40;
+		setWidth(30);setHeight(30);
 		setTextures("Enemies/Flyingeye/Attack3.png");
 		setFrame(6,0.25f);
 	}
@@ -28,13 +28,11 @@ public class Flyer extends Fahavalo{
 	public void move() {
 		handleDetection();
 		if(playerDetected) {
-			setTextures("Enemies/Flyingeye/Attack3.png");
-			setFrame(6,0.25f);
 			if(target.x<0) 
 				setFlipHorizontally(true);
 			else
 				setFlipHorizontally(false);
-			body.setLinearVelocity(target);
+			getBody().setLinearVelocity(target);
 		}
 	}
 	

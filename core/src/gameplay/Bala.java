@@ -23,8 +23,8 @@ public class Bala extends GameObject{
 		flipHorizontally=player.isFliped();
 		setDirection(player.isFliped());
 		setTextures("balaAnimation.png");
-		setFrame(1, 0.25f);
-		setPosition(player.getBody().getPosition().x+(7*getDirection()),player.getBody().getPosition().y+(7));
+		setFrame(4, 0.25f);
+		setPosition(player.getBody().getPosition().x+(10*getDirection()),player.getBody().getPosition().y+(7));
 		defineMe(BodyType.DynamicBody);
 		body.setFixedRotation(false);
 		body.setBullet(true);
@@ -101,9 +101,6 @@ public class Bala extends GameObject{
 	}
 	
 	public void matyAnimation() {
-		setTextures("balaPotika.png");
-		setFrame(5,0.4f);
-		body.setLinearVelocity(-getDirection()*speed, body.getLinearVelocity().y);
 	}
 	@Override
 	public void hurt() {

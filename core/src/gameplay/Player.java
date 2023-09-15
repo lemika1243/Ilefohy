@@ -9,15 +9,21 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ilefohy.game.Ilefohy;
 
+import ScreenMenu.GameOver;
+import ScreenMenu.ScreenMenu;
+
 
 public class Player extends GameObject{
 	int hery=3;
 	float jumpspeed=1500;
 	Vector<Bala> bala=new Vector<Bala>();
 	int mpanisa=0;
-	boolean isMitifitra=false;
 	boolean isHurt=false;
 	float hurtTime=0f;
+	float shootTimer=0f;
+	float timeafterDeath=0f;
+	boolean isMitifitra=false;
+	float canShoot=1.5f;
 	
 	float afterHurtDuration=2f;
 	
@@ -106,19 +112,24 @@ public class Player extends GameObject{
 	}
 	public void handleMitifitra(int key) {
 		handleMitifitra();
-		if(key==0) {
+		if(key==0&&!isMitifitra) {
+			mpanisa++;
 			isMitifitra=true;
-			mpanisa++;
+			shootTimer=0f;
 		}
-		if(isMitifitra&&mpanisa==1) {
-			mpanisa++;
-			Bala temp=new Bala(world,this);
-			bala.add(temp);
-		}
-		if(mpanisa>10) {
-			isMitifitra=false;
+		else {
 			mpanisa=0;
 		}
+		if(isMitifitra) {
+			shootTimer+=deltaTime;
+			if(mpanisa==1) {
+				mpanisa++;
+				Bala temp=new Bala(world,this);
+				bala.add(temp);
+			}
+		}
+		if(shootTimer>=canShoot)
+			isMitifitra=false;
 	}
 
 
@@ -145,7 +156,7 @@ public class Player extends GameObject{
 
 	@Override
 	public void hurt() {
-		if(hurtTime>=0.1f&&hurtTime<=0.117f) {
+		if(hurtTime<=0.01666555f) {
 			hery-=1;
 		}
 		else if(hurtTime>=afterHurtDuration) {
@@ -194,8 +205,11 @@ public class Player extends GameObject{
 	}
 	public void handleFahafatesana() {
 		if(hery<=0) {
+			timeafterDeath+=deltaTime;
 			matyAnimation();
 			maty();
+			if(timeafterDeath>=2f)
+				ilefohy.setScreen(new GameOver(ilefohy));
 		}
 	}
 	
