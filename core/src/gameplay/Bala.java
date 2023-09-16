@@ -2,9 +2,6 @@ package gameplay;
 
 import java.util.Vector;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Bala extends GameObject{
 	int direction=1;
@@ -12,28 +9,23 @@ public class Bala extends GameObject{
 	float duration;
 	float temporary;
 
+	//CONSTRUCTORS
 	public Bala(boolean flip,float x, float y) {
 		super(x, y-100,200,200);
 		flipHorizontally=flip;
 		setDirection(flip);
 		setTextures("balaAnimation.png");
-		setFrame(4);
+		setFrame(4,0.25f);
 		temporary=0f;
 		duration=1;
 	}
+	//END
 	
-	@Override
-	public void move(Vector<Integer> keys) {}
 	
-	public void move() {
-		setX(getX()+getDirection());
-		if(temporary>=getDuration()) {
-			matyAnimation();
-		}
-		else if(temporary>=(getDuration()+0.25f)) {
-			maty();
-		}
-	}
+	
+	
+	
+	//GET AND SET FUNCTIONS
 	
 	public int getDirection() {
 		return direction;
@@ -58,16 +50,35 @@ public class Bala extends GameObject{
 	public void setDuration(float d) {
 		duration=d;
 	}
+	
 	public float getDuration() {
 		return duration;
 	}
+	
 	public void setTemps(float t) {
 		temporary=t;
 	}
+	
 	public float getTemps() {
 		return temporary;
 	}
+	
+	public boolean getIsDead() {
+		return isDead;
+	}
 
+	//END
+	
+	
+	
+	
+	
+	
+	//REDEFINITION OF ABSTRACT FUNCTIONS
+	
+	@Override
+	public void move(Vector<Integer> keys) {}
+	
 	@Override
 	public void mitifitra(int key) {
 	}
@@ -79,23 +90,33 @@ public class Bala extends GameObject{
 	
 	public void matyAnimation() {
 		setTextures("balaPotika.png");
-		setFrame(5,25);
+		setFrame(5,0.25f);
+		animation.setFrameDuration(0.5f);
 		setX(getX()-(getDirection()));
 	}
-	
-	public boolean getIsDead() {
-		return isDead;
-	}
-
 	@Override
 	public void hurt() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void hurtAnimation() {
-		// TODO Auto-generated method stub
-		
 	}
+	//END
+	
+	
+	
+	
+	
+	//UTILITY FUNCTIONS
+	public void move() {
+		setX(getX()+getDirection());
+		if(temporary>=getDuration()) {
+			matyAnimation();
+		}
+		if(temporary>=getDuration()+0.25f) {
+			maty();
+		}
+	}
+
+	//END
 }
