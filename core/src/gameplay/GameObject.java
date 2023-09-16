@@ -25,7 +25,6 @@ public abstract class GameObject extends Sprite {
 	TextureRegion[] frames;
 	Animation<TextureRegion> animation;
 	TextureRegion currentFrame=new TextureRegion();
-	float deltaTime=0f;
 	float throughTime;
 	int framewidth, frameheight;
     float speed;
@@ -57,6 +56,9 @@ public abstract class GameObject extends Sprite {
     
     
     //GET AND SET FUNCTIONS
+    public Ilefohy getGame() {
+    	return ilefohy;
+    }
     public World getWorld() {
     	return world;
     }
@@ -219,9 +221,8 @@ public abstract class GameObject extends Sprite {
         body.createFixture(fixtureDef);
     }
 
-    public void drawMe(float delta,int adjust) {
-        deltaTime = delta;
-        throughTime += delta;
+    public void drawMe(int adjust) {
+        throughTime += Gdx.graphics.getDeltaTime();
         model.setProjectionMatrix(camera.combined);
         if (loopedAnimation) {
             loopAnimation();

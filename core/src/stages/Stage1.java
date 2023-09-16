@@ -1,5 +1,6 @@
 package stages;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
@@ -29,7 +30,9 @@ import com.ilefohy.game.Ilefohy;
 import ScreenMenu.ScreenMenu;
 import gameplay.Bala;
 import gameplay.Player;
+import gameplay.fahavalo.Fahavalo;
 import gameplay.fahavalo.Flyer;
+import gameplay.fahavalo.Portal;
 import mpihaino.MpihainoCollision;
 import mpihaino.MpihainoFanalaHidy;
 
@@ -45,9 +48,10 @@ public class Stage1 implements Screen {
 	World world; Box2DDebugRenderer box;
 	MpihainoFanalaHidy hidy=new MpihainoFanalaHidy();
 	MpihainoCollision contact;
-	Flyer f;
 	ParticleEffect particle=new ParticleEffect();
 	SpriteBatch batch=new SpriteBatch();
+	Vector<Fahavalo> fahavalo=new Vector<Fahavalo>();
+	Portal portal;
 	float deltaTime=0f;
 	
 	
@@ -66,9 +70,9 @@ public class Stage1 implements Screen {
 		tiledMap=tmxLoader.load("level1.tmx");
 		ortho=new OrthogonalTiledMapRenderer(tiledMap);
 		camera.position.set(gameport.getWorldWidth()/2,gameport.getWorldHeight()/2, 0);
-		f=new Flyer(world, game, player, camera);
 		particle.load(Gdx.files.internal("bulletParticle.p"), Gdx.files.internal(""));
 	    particle.scaleEffect(0.1f);
+	    portal=new Portal(world, game, camera, player);
 		makeAllBoxCollider();
 	}
 
@@ -83,11 +87,14 @@ public class Stage1 implements Screen {
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    handleGrounded();
 	    renderAll();
-	    f.move();
-	    f.drawMe(delta, f.getAdjustImage());
 	    player.move(hidy.getIndexOfMovement());
-	    player.drawMe(delta,1);
+	    player.drawMe(1);
 	    player.handleMitifitra(hidy.getMouseKey());
+	    portal.handled();
+	    for(Fahavalo fav:portal.getFahavalo()) {
+	    	fav.drawMe(8);
+	    	fav.move();
+	    }
 	    handleBala();
 	    world.step(1/30f, 6, 2);
 	    camera.position.set(player.getBody().getPosition().x, player.getBody().getPosition().y, 0);

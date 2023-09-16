@@ -25,7 +25,6 @@ public abstract class Fahavalo extends GameObject{
 		super(wo, i, cam);
 		player=p;
 		setShape(5, 5);
-        setPosition(p.getX()+100,32);
 		defineMe(BodyType.DynamicBody);
 		getBody().setBullet(true);
 		getBody().setUserData("fahavalo");
@@ -67,7 +66,8 @@ public abstract class Fahavalo extends GameObject{
 
 	@Override
 	public void maty() {
-		getWorld().destroyBody(getBody());
+		if(getHery()<=0)
+			getWorld().destroyBody(getBody());
 	}
 
 	@Override

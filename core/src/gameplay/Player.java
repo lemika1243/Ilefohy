@@ -2,6 +2,7 @@ package gameplay;
 
 import java.util.Vector;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -54,9 +55,8 @@ public class Player extends GameObject{
 	
 	
 	//ABSTRACT FUNCTIONS
-    public void drawMe(float delta,int adjust) {
-        deltaTime = delta;
-        throughTime += delta;
+    public void drawMe(int adjust) {
+        throughTime += Gdx.graphics.getDeltaTime();
         model.setProjectionMatrix(camera.combined);
         if (loopedAnimation) {
             loopAnimation();
@@ -121,7 +121,7 @@ public class Player extends GameObject{
 			mpanisa=0;
 		}
 		if(isMitifitra) {
-			shootTimer+=deltaTime;
+			shootTimer+=Gdx.graphics.getDeltaTime();
 			if(mpanisa==1) {
 				mpanisa++;
 				Bala temp=new Bala(world,this);
@@ -163,7 +163,7 @@ public class Player extends GameObject{
 			hurtTime=0f;
 			isHurt=false;
 		}
-		hurtTime+=deltaTime;
+		hurtTime+=Gdx.graphics.getDeltaTime();
 	}
 
 
@@ -199,13 +199,13 @@ public class Player extends GameObject{
 	public void handleMitifitra() {
 		for (int i = 0; i < bala.size(); i++) {
 			Bala temp=bala.elementAt(i);
-			temp.drawMe(deltaTime,1);
+			temp.drawMe(1);
 			temp.move(null);
 		}
 	}
 	public void handleFahafatesana() {
 		if(hery<=0) {
-			timeafterDeath+=deltaTime;
+			timeafterDeath+=Gdx.graphics.getDeltaTime();
 			matyAnimation();
 			maty();
 			if(timeafterDeath>=2f)
